@@ -6,7 +6,7 @@ response_count = Value('i', 0)
 api_call_count = Value('i', 0)
 
 
-def call_api(method: str, url: str, headers: dict = dict, data: dict = dict, json: dict = dict):
+def call_api(method: str, url: str, headers: dict = dict, data: dict = dict, json: dict = dict, print_response=False):
     with api_call_count.get_lock():
         api_call_count.value += 1
 
@@ -22,7 +22,8 @@ def call_api(method: str, url: str, headers: dict = dict, data: dict = dict, jso
         response = {
             "error": "Invalid Method"
         }
-    print(f"Response : {response.text}")
+    if print_response:
+        print(f"Response : {response.text}")
 
     with response_count.get_lock():
         response_count.value += 1
@@ -79,6 +80,7 @@ def start_process(args: tuple, process_list: list):
     p = Process(target=call_api, args=args)
     p.start()
     process_list.append(p)
+    return p
 
 
 def call_api_n_times_in_parllel(n=1):
@@ -94,18 +96,22 @@ def call_api_n_times_in_parllel(n=1):
 
 
 def call_unlimited_times_within_a_time_period(minutes=0, seconds=1):
-    global api_call_count
-    global response_count
-
     total_seconds = (60 * minutes) + seconds
     end_time = time.time() + total_seconds
     process_list = []
     args = put_request_data()
     while end_time > time.time():
-        start_process(args, process_list)
+        p =start_process(args, process_list)
+        p.join()
+    remaining_response = api_call_count.value-response_count.value
+    print(f"Number of times API called in {total_seconds} seconds is {api_call_count.value} and response received for {response_count.value}")
+    
+    
+    # print("Waititng to received response of remaining APIs...")
+    # response_time_start = time.time()
+    # for p in process_list:
+    #     p.join()
+    # print(f"Time taken to received response of remaining {remaining_response} APIs is {time.time()-response_time_start}")
 
-    print(f"Total API called in {total_seconds} seconds {api_call_count} and response received for {response_count}")
-
-
-call_api_n_times_in_parllel(10)
+# call_api_n_times_in_parllel(10)
 call_unlimited_times_within_a_time_period(seconds=10)
