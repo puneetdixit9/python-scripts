@@ -85,7 +85,7 @@ def start_process(args: tuple, process_list: list):
 
 def call_api_n_times_in_parallel(n=1):
     process_list = []
-    args = put_request_data()
+    args = put_request_data()  # change the method according to your requirement
     start_time = time.time()
     for i in range(n):
         start_process(args, process_list)
@@ -99,11 +99,14 @@ def call_unlimited_times_within_a_time_period(minutes=0, seconds=1):
     total_seconds = (60 * minutes) + seconds
     end_time = time.time() + total_seconds
     process_list = []
-    args = put_request_data()
+    args = put_request_data()  # change the method according to your requirement
     while end_time > time.time():
         p =start_process(args, process_list)
         p.join()
+
+
     remaining_response = api_call_count.value-response_count.value
+
     print(f"Number of times API called in {total_seconds} seconds is {api_call_count.value} and response received for {response_count.value}")
     
     
@@ -112,6 +115,11 @@ def call_unlimited_times_within_a_time_period(minutes=0, seconds=1):
     # for p in process_list:
     #     p.join()
     # print(f"Time taken to received response of remaining {remaining_response} APIs is {time.time()-response_time_start}")
+
+
+
+# CALL THESE FUNCTION TO TEST.
+
 
 # call_api_n_times_in_parallel(10)
 call_unlimited_times_within_a_time_period(seconds=10)
