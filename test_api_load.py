@@ -2,8 +2,6 @@ from multiprocessing import Process
 import requests
 import time
 
-number_of_api_calls = 10
-
 
 def call_api(method: str, url: str, headers: dict = dict, data: dict = dict, json: dict = dict):
     if method == "get":
@@ -27,6 +25,7 @@ request_url = "http://127.0.0.1:5000/wmp/demands/1?start_date=2023-05-24&end_dat
 request_headers = {
     "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4NTAwMTc4MCwianRpIjoiNzk1YmVhZTktMjYwNC00OWRhLThkNTQtOTY2YmQ0Y2YyNzFjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJ1c2VyX2lkIjo0LCJyb2xlIjpudWxsfSwibmJmIjoxNjg1MDAxNzgwLCJleHAiOjE2ODUwODgxODB9.FhKQRXkCCx7v_pY3f4fvFbE_I3DDmtHoZWZMbdUUlUA"
 }
+number_of_api_calls = 100
 
 process_list = []
 
