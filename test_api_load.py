@@ -1,16 +1,14 @@
 import time
 import requests
-from multiprocessing import Process
+from multiprocessing import Process, Value
 
-response_count = 0
-api_call_count = 0
+response_count = Value('i', 0)
+api_call_count = Value('i', 0)
 
 
 def call_api(method: str, url: str, headers: dict = dict, data: dict = dict, json: dict = dict):
-    global response_count
-    global api_call_count
-
-    api_call_count += 1
+    with api_call_count.get_lock():
+        api_call_count.value += 1
 
     if method == "get":
         response = requests.get(url, headers=headers)
@@ -25,7 +23,10 @@ def call_api(method: str, url: str, headers: dict = dict, data: dict = dict, jso
             "error": "Invalid Method"
         }
     print(f"Response : {response.text}")
-    response_count += 1
+
+    with response_count.get_lock():
+        response_count.value += 1
+        
     return response
 
 
