@@ -1,3 +1,10 @@
+"""
+Change request_headers, request_url, request_body and data according to your requirement in below functions.
+1. get_request_data
+2. post_request_data
+3. put_request_data
+"""
+
 import time
 import requests
 from multiprocessing import Process, Value
@@ -85,31 +92,28 @@ def start_process(args: tuple, process_list: list):
 
 def call_api_in_parallel_n_times(n=1):
     process_list = []
-    args = put_request_data()  # change the method according to your requirement
+    args = put_request_data()  # change the method according to your requirement (get, put or post)
     start_time = time.time()
     for i in range(n):
         start_process(args, process_list)
 
     for p in process_list:
         p.join()
-    print(f"Total time taken to call a api {n} times parallel : {time.time()-start_time}")
+    print(f"Total time taken to call a api {n} times parallely : {time.time()-start_time}")
 
 
 def call_api_in_parallel_unlimited_times_within_a_time_period(minutes=0, seconds=1):
     total_seconds = (60 * minutes) + seconds
     end_time = time.time() + total_seconds
     process_list = []
-    args = put_request_data()  # change the method according to your requirement
+    args = put_request_data()  # change the method according to your requirement (get, put or post)
     while end_time > time.time():
         p =start_process(args, process_list)
         p.join()
 
-
-    remaining_response = api_call_count.value-response_count.value
-
     print(f"Number of times API called in {total_seconds} seconds is {api_call_count.value} and response received for {response_count.value}")
-    
-    
+
+    # remaining_response = api_call_count.value - response_count.value
     # print("Waiting to received response of remaining APIs...")
     # response_time_start = time.time()
     # for p in process_list:
@@ -117,9 +121,7 @@ def call_api_in_parallel_unlimited_times_within_a_time_period(minutes=0, seconds
     # print(f"Time taken to received response of remaining {remaining_response} APIs is {time.time()-response_time_start}")
 
 
-
 # CALL THESE FUNCTION TO TEST.
 
-
-call_api_in_parallel_n_times(10)
+call_api_in_parallel_n_times(30)
 call_api_in_parallel_unlimited_times_within_a_time_period(seconds=10)
